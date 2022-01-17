@@ -104,7 +104,7 @@ function initializeGame() {
 
 let popUpsWithNoBomb;
 // function that keeps the moles popping up while game is running
-function startPoppingUp() {
+function startPoppingUp(level) {
   let moleIndex = randomMolePicker();
   //if below guarantees there is a bomb after 5 no bombs
   if (popUpsWithNoBomb > 5) {
@@ -127,9 +127,13 @@ function startPoppingUp() {
       }
       hideMole(moleIndex);
     }
-    if (gameRunning) requestAnimationFrame(startPoppingUp);
   }, 2000);
+  setTimeout(() => {
+    if (gameRunning) requestAnimationFrame(startPoppingUp);
+  }, gameSpeed);
 }
+
+let gameSpeed;
 
 //function replaces a single mole (img) with another
 function replaceMole(moleIndex, imgSrc, state) {
@@ -254,6 +258,8 @@ function resetVariables() {
   moleLocationArr = moleLocations(8);
   molesArr = moleCreator(moleLocationArr);
   popUpsWithNoBomb = 0;
+  level = 1;
+  gameSpeed = 2000;
 }
 
 function livesUpdate(number) {
@@ -267,6 +273,14 @@ function livesUpdate(number) {
 
 function pointsUpdate(number) {
   points = number;
+  if (points === 500 || points === 1000 || points === 1500 || points === 2000) {
+    levelUp();
+    alert(`Congrats, you are now in level ${level}!`);
+  }
+  if (points === 2500) {
+    alert("You won!");
+    endGame();
+  }
   ctx.clearRect(10, canvas.height - 40, 400, 30);
   ctx.fillText(`Points: ${points}`, 10, canvas.height - 10);
 }
@@ -274,4 +288,11 @@ function pointsUpdate(number) {
 function playSound(url) {
   const mySound = new sound(url);
   mySound.play();
+}
+
+let level;
+function levelUp() {
+  level++;
+  console.log(level);
+  gameSpeed -= 300;
 }
