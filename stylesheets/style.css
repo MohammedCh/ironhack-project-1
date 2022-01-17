@@ -12,6 +12,7 @@
 body {
   padding: 0;
   text-align: center;
+  background-color: rgba(152, 0, 0, 0.473);
 }
 
 body button {

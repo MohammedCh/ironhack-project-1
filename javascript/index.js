@@ -1,6 +1,7 @@
 window.onload = () => {
   document.getElementById("start-button").onclick = () => {
     resetVariables();
+    hideOrShowElements("hide");
     startGame();
     ctx.font = "30px Arial";
     ctx.fillStyle = "white";
@@ -75,25 +76,26 @@ function moleCreator(moleLocArr) {
 // TODO remove const and the arr return from above if not used
 let molesArr;
 
-let myInterval;
+let gameRunning;
 function startGame() {
-  hideOrShowElements("hide");
-  myInterval = setInterval(() => {
-    let moleIndex = randomMolePicker();
-    //if random index returned above number of moles, then pop up bomb
-    if (moleIndex <= molesArr.length - 1) {
-      popUpMole(moleIndex);
-    } else {
-      moleIndex = popUpBomb();
-    }
-    setTimeout(() => {
-      if (molesArr[moleIndex].state != "underground" && myInterval != null) {
-        if (molesArr[moleIndex].state != "bomb") {
-          livesUpdate(lives - 1);
-        }
-        hideMole(moleIndex);
+  console.log("initialize");
+  let moleIndex = randomMolePicker();
+  //if random index returned above number of moles, then pop up bomb
+  if (moleIndex <= molesArr.length - 1) {
+    popUpMole(moleIndex);
+  } else {
+    moleIndex = popUpBomb();
+  }
+  setTimeout(() => {
+    if (molesArr[moleIndex].state != "underground") {
+      if (molesArr[moleIndex].state != "bomb") {
+        livesUpdate(lives - 1);
       }
-    }, 2000);
+      hideMole(moleIndex);
+    }
+  }, 2000);
+  setTimeout(() => {
+    if (gameRunning) requestAnimationFrame(startGame);
   }, 2000);
 }
 
@@ -200,8 +202,7 @@ function hideOrShowElements(hideOrShow) {
 let lives;
 
 function endGame() {
-  clearInterval(myInterval);
-  myInterval = null;
+  gameRunning = false;
   hideOrShowElements();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   alert(`Your score was ${points}`);
@@ -210,6 +211,7 @@ function endGame() {
 
 //function used if game ends
 function resetVariables() {
+  gameRunning = true;
   pointsUpdate(0);
   livesUpdate(3);
   moleLocationArr = moleLocations(8);
