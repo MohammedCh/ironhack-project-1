@@ -1,12 +1,6 @@
 window.onload = () => {
   document.getElementById("start-button").onclick = () => {
-    resetVariables();
-    hideOrShowElements("hide");
     startGame();
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "white";
-    ctx.fillText(`Points: ${points}`, 10, canvas.height - 10);
-    ctx.fillText(`Lives: ${lives}`, 10, canvas.height - 50);
   };
   document.getElementById("end-button").onclick = () => {
     endGame();
@@ -78,11 +72,34 @@ let molesArr;
 
 let gameRunning;
 function startGame() {
-  console.log("initialize");
+  initializeGame();
+  startPoppingUp();
+}
+
+//function that does all things that have to happen at start of the game once
+function initializeGame() {
+  resetVariables();
+  hideOrShowElements("hide");
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText(`Points: ${points}`, 10, canvas.height - 10);
+  ctx.fillText(`Lives: ${lives}`, 10, canvas.height - 50);
+}
+
+let popUpsWithNoBomb;
+// function that keeps the moles popping up while game is running
+function startPoppingUp() {
   let moleIndex = randomMolePicker();
-  //if random index returned above number of moles, then pop up bomb
-  if (moleIndex <= molesArr.length - 1) {
+  //if below guarantees there is a bomb after 5 no bombs
+  if (popUpsWithNoBomb > 5) {
+    moleIndex = popUpBomb();
+
+    //if random index returned is lower the number of moles, then pop up a mole
+  } else if (moleIndex <= molesArr.length - 1) {
     popUpMole(moleIndex);
+    popUpsWithNoBomb += 1;
+
+    //else if above number of moles, then pop up bomb instead
   } else {
     moleIndex = popUpBomb();
   }
@@ -93,9 +110,7 @@ function startGame() {
       }
       hideMole(moleIndex);
     }
-  }, 2000);
-  setTimeout(() => {
-    if (gameRunning) requestAnimationFrame(startGame);
+    if (gameRunning) requestAnimationFrame(startPoppingUp);
   }, 2000);
 }
 
@@ -162,7 +177,8 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
       cursorClickPosition.x >= element.x &&
       cursorClickPosition.x <= element.x + 83 &&
       cursorClickPosition.y >= element.y &&
-      cursorClickPosition.y <= element.y + 62
+      cursorClickPosition.y <= element.y + 62 &&
+      element.state === "surface"
     ) {
       console.log("hit");
       hideMole(molesArr.indexOf(element));
@@ -216,6 +232,7 @@ function resetVariables() {
   livesUpdate(3);
   moleLocationArr = moleLocations(8);
   molesArr = moleCreator(moleLocationArr);
+  popUpsWithNoBomb = 0;
 }
 
 function livesUpdate(number) {
