@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="stylesheets/style.css" />
+    <title>Angry moles</title>
+  </head>
+  <body>
+    <div id="title" class="to-hide">
+      <img src="./images/mole_logo.png" alt="" class="logo-img" />
+      <br />
+      <h1>Angry moles!</h1>
+    </div>
+    <div id="game-board">
+      <canvas
+        class="to-show"
+        style="display: none"
+        id="game-canvas"
+        width="750"
+        height="500"
+      ></canvas>
+    </div>
+    <div id="outside-of-canvas">
+      <p class="to-hide">
+        Use mouse-click to keep <br />
+        the moles under control!
+      </p>
+      <button class="to-hide" id="start-button">Start Game</button>
+      <button class="to-show" id="end-button" style="display: none">
+        End Game
+      </button>
+      <div id="popup" style="display: none">
+        <img src="./images/pow.png" alt="pow" class="" />
+      </div>
+    </div>
+    <script type="text/javascript" src="javascript/index.js"></script>
+  </body>
+</html>

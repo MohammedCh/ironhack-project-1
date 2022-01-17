@@ -1,0 +1,46 @@
+#game-canvas {
+  background: url("/images/grass-background.jpg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  cursor: url("/images/mallet.png") 40 30, auto;
+}
+
+#game-canvas:active {
+  cursor: url("/images/mallet-hit.png") 40 30, auto;
+}
+
+body {
+  padding: 0;
+  text-align: center;
+}
+
+body button {
+  font-size: 30px;
+  background-color: brown;
+  color: #fff;
+  padding: 2% 4%;
+  border: 0;
+  box-shadow: 0;
+  border-radius: 5px;
+  margin: 2%;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ccc;
+}
+
+/* #game-board {
+  float: left;
+  padding: 20px 0px;
+} */
+
+#outside-of-canvas p {
+  font-size: 16px;
+  font-family: "Verdana";
+}
+
+h1 {
+  padding: 1% 0;
+  font-family: "Verdana";
+}
