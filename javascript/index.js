@@ -273,11 +273,11 @@ function livesUpdate(number) {
 
 function pointsUpdate(number) {
   points = number;
-  if (points === 500 || points === 1000 || points === 1500 || points === 2000) {
+  if (points === 1000 || points === 2000 || points === 3000 || points === 4000) {
     levelUp();
     alert(`Congrats, you are now in level ${level}!`);
   }
-  if (points === 2500) {
+  if (points === 5000) {
     alert("You won!");
     endGame();
   }

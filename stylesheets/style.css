@@ -2,6 +2,7 @@
   background: url("/images/grass-background.jpg");
   background-size: cover;
   cursor: url("/images/mallet.png") 40 30, auto;
+  border-radius: 10px;
 }
 
 #game-canvas:active {
@@ -9,9 +10,20 @@
 }
 
 body {
-  padding: 0;
+  padding: 2% 0;
   text-align: center;
-  background-color: rgba(152, 0, 0, 0.473);
+}
+html::after {
+  background-image: url("/images/background.jpg");
+  background-size: cover;
+  content: "";
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  z-index: -1;
+  opacity: 0.45;
 }
 
 body button {
@@ -29,10 +41,9 @@ body button {
 button:hover {
   background-color: #ccc;
 }
-
-/* #game-board {
+/*
+#game-board {
   float: left;
-  padding: 20px 0px;
 } */
 
 #outside-of-canvas p {
@@ -43,4 +54,16 @@ button:hover {
 h1 {
   padding: 1% 0;
   font-family: "Verdana";
+}
+
+ul {
+  list-style-type: none;
+  background-color: rgba(22, 133, 10, 0.8);
+  margin: 0 30%;
+  padding: 0;
+  margin-top: 1%;
+  border-radius: 10px;
+}
+li {
+  margin-bottom: 20px;
 }
