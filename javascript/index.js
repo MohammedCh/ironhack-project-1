@@ -10,6 +10,22 @@ window.onload = () => {
   });
 };
 
+class sound {
+  constructor(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function () {
+      this.sound.play();
+    };
+    this.stop = function () {
+      this.sound.pause();
+    };
+  }
+}
 class Mole {
   constructor(x, y, imgSrc, state) {
     this.x = x;
@@ -93,6 +109,7 @@ function startPoppingUp() {
   //if below guarantees there is a bomb after 5 no bombs
   if (popUpsWithNoBomb > 5) {
     moleIndex = popUpBomb();
+    popUpsWithNoBomb = 0;
 
     //if random index returned is lower the number of moles, then pop up a mole
   } else if (moleIndex <= molesArr.length - 1) {
@@ -128,6 +145,7 @@ function replaceMole(moleIndex, imgSrc, state) {
 //function changes mole pic, making mole pop up
 function popUpMole(moleIndex) {
   replaceMole(moleIndex, "./images/mole_1.png", "surface");
+  playSound("/sounds/pop.ogg");
 }
 //function changes mole pic, making a bomb pop up, returns index where bomb popped up
 function popUpBomb() {
@@ -171,6 +189,7 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
       element.state === "bomb"
     ) {
       console.log("kaboom");
+      playSound("/sounds/explosion.mp3");
       hideMole(molesArr.indexOf(element));
       livesUpdate(lives - 1);
     } else if (
@@ -197,6 +216,7 @@ function showPow(event) {
   setTimeout(() => {
     popup.setAttribute("style", "display:none");
   }, 250);
+  playSound("/sounds/hit.wav");
 }
 
 let points;
@@ -223,6 +243,7 @@ function endGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   alert(`Your score was ${points}`);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  playSound("/sounds/endGame.wav");
 }
 
 //function used if game ends
@@ -248,4 +269,9 @@ function pointsUpdate(number) {
   points = number;
   ctx.clearRect(10, canvas.height - 40, 400, 30);
   ctx.fillText(`Points: ${points}`, 10, canvas.height - 10);
+}
+
+function playSound(url) {
+  const mySound = new sound(url);
+  mySound.play();
 }
