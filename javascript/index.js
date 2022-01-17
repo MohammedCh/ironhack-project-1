@@ -135,8 +135,6 @@ function randomMolePicker() {
   return randomMoleIndex;
 }
 
-totalMoles = molesArr.length - 1
-
 //returns an object with {x:, y:} of canvas coordinates of where the mouse clicked
 function getCursorPosition(canvas, event) {
   const rect = canvas.getBoundingClientRect();
