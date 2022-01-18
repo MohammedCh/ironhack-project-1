@@ -156,7 +156,7 @@ function replaceMole(moleIndex, imgSrc, state) {
 //function changes mole pic, making mole pop up
 function popUpMole(moleIndex) {
   replaceMole(moleIndex, "./images/mole_1.png", "surface");
-  playSound("/sounds/pop.ogg");
+  playSound("./sounds/pop.ogg");
 }
 //function changes mole pic, making a bomb pop up, returns index where bomb popped up
 function popUpBomb() {
@@ -200,7 +200,7 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
       element.state === "bomb"
     ) {
       console.log("kaboom");
-      playSound("/sounds/explosion.mp3");
+      playSound("./sounds/explosion.mp3");
       hideMole(molesArr.indexOf(element));
       livesUpdate(lives - 1);
     } else if (
@@ -244,7 +244,7 @@ function showPow(event) {
   setTimeout(() => {
     popup.setAttribute("style", "display:none");
   }, 250);
-  playSound("/sounds/hit.wav");
+  playSound("./sounds/hit.wav");
 }
 
 let points;
@@ -271,11 +271,11 @@ function endGame(wonGameBoolean) {
       "You won!",
       "Congratulations!!! You have completed the game! :)"
     );
-    playSound("/sounds/win.wav");
-    playSound("/sounds/yes.wav");
+    playSound("./sounds/win.wav");
+    playSound("./sounds/yes.wav");
   } else {
     triggerModal("Game ended", `Your score was ${points}`);
-    playSound("/sounds/endGame.wav");
+    playSound("./sounds/endGame.wav");
   }
   checkIfNewHighscore();
   gameRunning = false;
