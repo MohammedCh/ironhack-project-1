@@ -1,13 +1,17 @@
 window.onload = () => {
   document.getElementById("start-button").onclick = () => {
     startGame();
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        endGame();
+      }
+    });
+
+    canvas.addEventListener("mousedown", function (e) {
+      checkIfHelpAsked(getCursorPosition(canvas, e));
+      checkIfMoleIsHit(getCursorPosition(canvas, e), e);
+    });
   };
-  document.getElementById("end-button").onclick = () => {
-    endGame();
-  };
-  canvas.addEventListener("mousedown", function (e) {
-    checkIfMoleIsHit(getCursorPosition(canvas, e), e);
-  });
 };
 
 class sound {
@@ -89,13 +93,20 @@ let molesArr;
 let gameRunning;
 function startGame() {
   initializeGame();
-  startPoppingUp();
+  setTimeout(() => {
+    startPoppingUp();
+  }, 1000);
 }
 
 //function that does all things that have to happen at start of the game once
 function initializeGame() {
   resetVariables();
   hideOrShowElements("hide");
+  const questionMarkImg = new Image();
+  questionMarkImg.src = "/images/questionMark.png";
+  questionMarkImg.addEventListener("load", () => {
+    ctx.drawImage(questionMarkImg, canvas.width - 50, 0, 50, 50);
+  });
 }
 
 let popUpsWithNoBomb;
@@ -205,6 +216,23 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
       showPow(event);
     }
   });
+}
+
+function checkIfHelpAsked(cursorClickPosition) {
+  if (
+    cursorClickPosition.x >= canvas.width - 50 &&
+    cursorClickPosition.x <= canvas.width &&
+    cursorClickPosition.y >= 0 &&
+    cursorClickPosition.y <= 50
+  ) {
+    const myModal = new bootstrap.Modal(
+      document.getElementById("guidelinesModal"),
+      {
+        keyboard: false,
+      }
+    );
+    myModal.show();
+  }
 }
 
 //shows the popup image with "pow" where the mouse hits a mole

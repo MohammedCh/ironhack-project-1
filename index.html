@@ -16,12 +16,12 @@
       crossorigin="anonymous"
     ></script>
     <!--end of bootstrap stuff  -->
-    <link rel="stylesheet" href="stylesheets/style.css" />
+    <link id="mainStylesheet" rel="stylesheet" href="stylesheets/style.css" />
     <title>Angry moles</title>
   </head>
   <body>
     <div id="title" class="to-hide">
-      <img src="../images/mole_logo.png" alt="" class="logo-img" />
+      <img src="./images/mole_logo.png" alt="" class="logo-img" />
       <br />
       <h1>Angry moles!</h1>
     </div>
@@ -39,7 +39,7 @@
         Use mouse-click to keep <br />
         the moles under control!
       </p>
-      <ul class="to-show" style="display: none">
+      <!-- <ul class="to-show" style="display: none">
         <li>
           Use mallet<span>
             <img
@@ -86,11 +86,9 @@
         </li>
         <li>Every <b>1000</b> points you get to a new level.</li>
         <li>Finish level 5 to win!</li>
-      </ul>
+        <li>Press <i>escape</i> button to end game.</li>
+      </ul> -->
       <button class="to-hide" id="start-button">Start Game</button>
-      <button class="to-show" id="end-button" style="display: none">
-        End Game
-      </button>
       <div id="popup" style="display: none">
         <img src="./images/pow.png" alt="pow" class="" />
       </div>
@@ -121,7 +119,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-primary"
+              class="btn btn-success"
               data-bs-dismiss="modal"
             >
               OK
@@ -130,6 +128,90 @@
         </div>
       </div>
     </div>
+
+    <!-- Guidelines Modal -->
+    <div
+      class="modal fade"
+      id="guidelinesModal"
+      tabindex="-1"
+      aria-labelledby="guidelinesModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content" id="guidelinesModalContent">
+          <div class="modal-header">
+            <h5 class="modal-title" id="guidelinesModalLabel">Guidelines</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <ul class="to-show">
+              <li>
+                Use mallet<span>
+                  <img
+                    src="./images/mallet.png"
+                    alt="mallet"
+                    class=""
+                    width="40px"
+                    height="40px"
+                  />
+                </span>
+                by clicking on the moles!
+              </li>
+              <li>
+                Every mole<span>
+                  <img
+                    src="./images/mole_1.png"
+                    alt="mallet"
+                    class=""
+                    width="42px"
+                    height="31px"
+                  />
+                </span>
+                hit is <b>+100</b> points.
+              </li>
+              <li>
+                Every mole<span>
+                  <img
+                    src="./images/mole_1.png"
+                    alt="mallet"
+                    class=""
+                    width="42px"
+                    height="31px"
+                  />
+                </span>
+                missed and every bomb
+                <img
+                  src="./images/mole_bomb.png"
+                  alt="mallet"
+                  class=""
+                  width="42px"
+                  height="31px"
+                />
+                hit is <b>-100</b> points.
+              </li>
+              <li>Every <b>1000</b> points you get to a new level.</li>
+              <li>Finish level 5 to win!</li>
+              <li>Press <i>escape</i> button to end game.</li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-warning"
+              data-bs-dismiss="modal"
+            >
+              Ok
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script type="text/javascript" src="javascript/index.js"></script>
   </body>
 </html>
