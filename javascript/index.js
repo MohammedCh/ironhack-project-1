@@ -272,8 +272,8 @@ function livesUpdate(number) {
   }
   ctx.font = "60px Arial";
   ctx.fillStyle = "red";
-  ctx.clearRect(10, canvas.height - 100, 400, 50);
-  ctx.fillText(`${livesText}`, 10, canvas.height - 50);
+  ctx.clearRect(canvas.width-120, canvas.height - 50, 110, 50);
+  ctx.fillText(`${livesText}`, canvas.width-120, canvas.height - 10);
 }
 
 function pointsUpdate(number) {
