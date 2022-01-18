@@ -356,7 +356,9 @@ function triggerModal(title, content) {
 
 //functions called at endGame() that checks and updates highscores
 function checkIfNewHighscore() {
-  const list = document.getElementById("highscores").children;
+  const orderedList = document.getElementById("highscores");
+  const list = orderedList.children;
+  const listParent = orderedList.parentElement;
   const arr = [];
 
   //add all highscore elements to arr from DOM. If no value add 0.
@@ -383,4 +385,5 @@ function checkIfNewHighscore() {
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] != 0) list[i].innerHTML = arr[i];
   }
+  listParent.style = "display: block";
 }
