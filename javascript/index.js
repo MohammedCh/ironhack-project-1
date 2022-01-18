@@ -1,17 +1,17 @@
 window.onload = () => {
   document.getElementById("start-button").onclick = () => {
     startGame();
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") {
-        endGame();
-      }
-    });
 
     canvas.addEventListener("mousedown", function (e) {
       checkIfHelpAsked(getCursorPosition(canvas, e));
       checkIfMoleIsHit(getCursorPosition(canvas, e), e);
     });
   };
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && gameRunning) {
+      endGame();
+    }
+  });
 };
 
 class sound {
@@ -277,6 +277,7 @@ function endGame(wonGameBoolean) {
     triggerModal("Game ended", `Your score was ${points}`);
     playSound("/sounds/endGame.wav");
   }
+  checkIfNewHighscore();
   gameRunning = false;
   hideOrShowElements();
 }
@@ -343,14 +344,43 @@ function levelUp() {
   gameSpeed -= 300;
 }
 
+//functions that creates popups
 function triggerModal(title, content) {
   document.getElementById("staticBackdropLabel").innerHTML = title;
   document.getElementById("modalBody").innerHTML = content;
   const myModal = new bootstrap.Modal(
-    document.getElementById("staticBackdrop"),
-    {
-      keyboard: false,
-    }
+    document.getElementById("staticBackdrop")
   );
   myModal.show();
+}
+
+//functions called at endGame() that checks and updates highscores
+function checkIfNewHighscore() {
+  const list = document.getElementById("highscores").children;
+  const arr = [];
+
+  //add all highscore elements to arr from DOM. If no value add 0.
+  for (const el of list) {
+    if (el.innerHTML === "") {
+      arr.push(0);
+    } else {
+      arr.push(parseFloat(el.innerHTML));
+    }
+  }
+  //if last element of (sorted) array is smaller than points then update
+  if (points > arr[arr.length - 1]) {
+    arr[arr.length - 1] = points;
+  }
+
+  //sort array in descending format
+  arr
+    .sort(function (a, b) {
+      return a - b;
+    })
+    .reverse();
+
+  //update highscore on html
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] != 0) list[i].innerHTML = arr[i];
+  }
 }
