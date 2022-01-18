@@ -385,5 +385,6 @@ function checkIfNewHighscore() {
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] != 0) list[i].innerHTML = arr[i];
   }
+  console.log(arr[0]);
   if (arr[0] != 0) listParent.style = "display: block";
 }
