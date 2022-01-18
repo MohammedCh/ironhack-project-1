@@ -96,15 +96,11 @@ function startGame() {
 function initializeGame() {
   resetVariables();
   hideOrShowElements("hide");
-  ctx.font = "30px Arial";
-  ctx.fillStyle = "white";
-  ctx.fillText(`Points: ${points}`, 10, canvas.height - 10);
-  ctx.fillText(`Lives: ${lives}`, 10, canvas.height - 50);
 }
 
 let popUpsWithNoBomb;
 // function that keeps the moles popping up while game is running
-function startPoppingUp(level) {
+function startPoppingUp() {
   let moleIndex = randomMolePicker();
   //if below guarantees there is a bomb after 5 no bombs
   if (popUpsWithNoBomb > 5) {
@@ -254,7 +250,8 @@ function endGame() {
 function resetVariables() {
   gameRunning = true;
   pointsUpdate(0);
-  livesUpdate(3);
+  livesAtGameStart = 3;
+  livesUpdate(livesAtGameStart);
   moleLocationArr = moleLocations(8);
   molesArr = moleCreator(moleLocationArr);
   popUpsWithNoBomb = 0;
@@ -262,18 +259,31 @@ function resetVariables() {
   gameSpeed = 2000;
 }
 
+let livesAtGameStart;
+
 function livesUpdate(number) {
   lives = number;
   if (lives === 0) {
     endGame();
   }
-  ctx.clearRect(10, canvas.height - 80, 400, 30);
-  ctx.fillText(`Lives: ${lives}`, 10, canvas.height - 50);
+  let livesText = "";
+  for (let i = 0; i < lives; i++) {
+    livesText = livesText + "♥";
+  }
+  ctx.font = "60px Arial";
+  ctx.fillStyle = "red";
+  ctx.clearRect(10, canvas.height - 100, 400, 50);
+  ctx.fillText(`${livesText}`, 10, canvas.height - 50);
 }
 
 function pointsUpdate(number) {
   points = number;
-  if (points === 1000 || points === 2000 || points === 3000 || points === 4000) {
+  if (
+    points === 1000 ||
+    points === 2000 ||
+    points === 3000 ||
+    points === 4000
+  ) {
     levelUp();
     alert(`Congrats, you are now in level ${level}!`);
   }
@@ -281,6 +291,8 @@ function pointsUpdate(number) {
     alert("You won!");
     endGame();
   }
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
   ctx.clearRect(10, canvas.height - 40, 400, 30);
   ctx.fillText(`Points: ${points}`, 10, canvas.height - 10);
 }
