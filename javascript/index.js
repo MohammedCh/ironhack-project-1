@@ -103,7 +103,7 @@ function initializeGame() {
   resetVariables();
   hideOrShowElements("hide");
   const questionMarkImg = new Image();
-  questionMarkImg.src = "/images/questionMark.png";
+  questionMarkImg.src = "./images/questionMark.png";
   questionMarkImg.addEventListener("load", () => {
     ctx.drawImage(questionMarkImg, canvas.width - 50, 0, 50, 50);
   });
