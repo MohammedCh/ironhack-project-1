@@ -1,12 +1,12 @@
 #game-canvas {
-  background: url("/images/grass-background.jpg");
+  background: url("../images/grass-background.jpg");
   background-size: cover;
-  cursor: url("/images/mallet.png") 40 30, auto;
+  cursor: url("../images/mallet.png") 40 30, auto;
   border-radius: 10px;
 }
 
 #game-canvas:active {
-  cursor: url("/images/mallet-hit.png") 40 30, auto;
+  cursor: url("../images/mallet-hit.png") 40 30, auto;
 }
 
 body {
@@ -15,7 +15,7 @@ body {
 }
 
 html::after {
-  background-image: url("/images/background.jpg");
+  background-image: url("../images/background.jpg");
   background-size: cover;
   content: "";
   position: absolute;
