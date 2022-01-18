@@ -237,13 +237,20 @@ function hideOrShowElements(hideOrShow) {
 
 let lives;
 
-function endGame() {
+function endGame(wonGameBoolean) {
+  if (wonGameBoolean) {
+    triggerModal(
+      "You won!",
+      "Congratulations!!! You have completed the game! :)"
+    );
+    playSound("/sounds/win.wav");
+    playSound("/sounds/yes.wav");
+  } else {
+    triggerModal("Game ended", `Your score was ${points}`);
+    playSound("/sounds/endGame.wav");
+  }
   gameRunning = false;
   hideOrShowElements();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  alert(`Your score was ${points}`);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  playSound("/sounds/endGame.wav");
 }
 
 //function used if game ends
@@ -272,8 +279,8 @@ function livesUpdate(number) {
   }
   ctx.font = "60px Arial";
   ctx.fillStyle = "red";
-  ctx.clearRect(canvas.width-120, canvas.height - 50, 110, 50);
-  ctx.fillText(`${livesText}`, canvas.width-120, canvas.height - 10);
+  ctx.clearRect(canvas.width - 120, canvas.height - 50, 110, 50);
+  ctx.fillText(`${livesText}`, canvas.width - 120, canvas.height - 10);
 }
 
 function pointsUpdate(number) {
@@ -285,11 +292,10 @@ function pointsUpdate(number) {
     points === 4000
   ) {
     levelUp();
-    alert(`Congrats, you are now in level ${level}!`);
+    triggerModal("Level Up!", `Congrats, you are now in level ${level}!`);
   }
   if (points === 5000) {
-    alert("You won!");
-    endGame();
+    endGame(true);
   }
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
@@ -307,4 +313,16 @@ function levelUp() {
   level++;
   console.log(level);
   gameSpeed -= 300;
+}
+
+function triggerModal(title, content) {
+  document.getElementById("staticBackdropLabel").innerHTML = title;
+  document.getElementById("modalBody").innerHTML = content;
+  const myModal = new bootstrap.Modal(
+    document.getElementById("staticBackdrop"),
+    {
+      keyboard: false,
+    }
+  );
+  myModal.show();
 }
