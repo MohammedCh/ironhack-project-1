@@ -12,6 +12,10 @@ window.onload = () => {
       endGame();
     }
   });
+  modalCloseBtns = document.getElementsByClassName("modal-btn");
+  for (const btn of modalCloseBtns) {
+    btn.addEventListener("click", () => resumeGame());
+  }
 };
 
 class sound {
@@ -93,9 +97,7 @@ let molesArr;
 let gameRunning;
 function startGame() {
   initializeGame();
-  setTimeout(() => {
-    startPoppingUp();
-  }, 1000);
+  startPoppingUp();
 }
 
 //function that does all things that have to happen at start of the game once
@@ -112,32 +114,36 @@ function initializeGame() {
 let popUpsWithNoBomb;
 // function that keeps the moles popping up while game is running
 function startPoppingUp() {
-  let moleIndex = randomMolePicker();
-  //if below guarantees there is a bomb after 5 no bombs
-  if (popUpsWithNoBomb > 5) {
-    moleIndex = popUpBomb();
-    popUpsWithNoBomb = 0;
+  if (gameRunning) {
+    setTimeout(() => {
+      let moleIndex = randomMolePicker();
+      //if below guarantees there is a bomb after 5 no bombs
+      if (popUpsWithNoBomb > 5) {
+        moleIndex = popUpBomb();
+        popUpsWithNoBomb = 0;
 
-    //if random index returned is lower the number of moles, then pop up a mole
-  } else if (moleIndex <= molesArr.length - 1) {
-    popUpMole(moleIndex);
-    popUpsWithNoBomb += 1;
+        //if random index returned is lower the number of moles, then pop up a mole
+      } else if (moleIndex <= molesArr.length - 1) {
+        popUpMole(moleIndex);
+        popUpsWithNoBomb += 1;
 
-    //else if above number of moles, then pop up bomb instead
-  } else {
-    moleIndex = popUpBomb();
-  }
-  setTimeout(() => {
-    if (molesArr[moleIndex].state != "underground") {
-      if (molesArr[moleIndex].state != "bomb") {
-        livesUpdate(lives - 1);
+        //else if above number of moles, then pop up bomb instead
+      } else {
+        moleIndex = popUpBomb();
       }
-      hideMole(moleIndex);
-    }
-  }, 2000);
-  setTimeout(() => {
-    if (gameRunning) requestAnimationFrame(startPoppingUp);
-  }, gameSpeed);
+      setTimeout(() => {
+        if (molesArr[moleIndex].state != "underground" && gameRunning) {
+          if (molesArr[moleIndex].state != "bomb") {
+            livesUpdate(lives - 1);
+          }
+          hideMole(moleIndex);
+        }
+      }, 2000);
+      setTimeout(() => {
+        if (gameRunning) requestAnimationFrame(startPoppingUp);
+      }, gameSpeed);
+    }, 1000);
+  }
 }
 
 let gameSpeed;
@@ -231,6 +237,7 @@ function checkIfHelpAsked(cursorClickPosition) {
         keyboard: false,
       }
     );
+    pauseGame();
     myModal.show();
   }
 }
@@ -351,6 +358,7 @@ function triggerModal(title, content) {
   const myModal = new bootstrap.Modal(
     document.getElementById("staticBackdrop")
   );
+  pauseGame();
   myModal.show();
 }
 
@@ -387,4 +395,12 @@ function checkIfNewHighscore() {
   }
   console.log(arr[0]);
   if (arr[0] != 0) listParent.style = "display: block";
+}
+
+function pauseGame() {
+  gameRunning = false;
+}
+function resumeGame() {
+  gameRunning = true;
+  startPoppingUp();
 }
