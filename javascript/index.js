@@ -257,7 +257,13 @@ function checkIfGamePaused(cursorClickPosition) {
     cursorClickPosition.y >= 0 &&
     cursorClickPosition.y <= 50
   ) {
-    gamePaused ? resumeGame() : pauseGame();
+    if (!gamePaused) {
+      triggerModal(
+        "Game paused",
+        `Click on the OK button to resume`
+      );
+    }
+    //gamePaused ? resumeGame() : pauseGame();
   }
 }
 //shows the popup image with "pow" where the mouse hits a mole
