@@ -12,7 +12,6 @@
 body {
   padding: 2% 0;
   text-align: center;
-  -webkit-text-stroke: 0.5px white;
 }
 
 html::after {
@@ -82,4 +81,13 @@ li {
 #highscores {
   padding: 0;
   list-style-type: none;
+
+}
+
+#highscoresContainer{
+  color: rgb(87, 0, 0);
+  font-size: 1.3rem;
+  background-color:rgba(255, 255, 255, 0.371);
+  margin: 0 43%;
+  border-radius: 10px;
 }

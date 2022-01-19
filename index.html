@@ -39,57 +39,8 @@
         Use mouse-click to keep <br />
         the moles under control!
       </p>
-      <!-- <ul class="to-show" style="display: none">
-        <li>
-          Use mallet<span>
-            <img
-              src="./images/mallet.png"
-              alt="mallet"
-              class=""
-              width="40px"
-              height="40px"
-            />
-          </span>
-          by clicking on the moles!
-        </li>
-        <li>
-          Every mole<span>
-            <img
-              src="./images/mole_1.png"
-              alt="mallet"
-              class=""
-              width="42px"
-              height="31px"
-            />
-          </span>
-          hit is <b>+100</b> points.
-        </li>
-        <li>
-          Every mole<span>
-            <img
-              src="./images/mole_1.png"
-              alt="mallet"
-              class=""
-              width="42px"
-              height="31px"
-            />
-          </span>
-          missed and every bomb
-          <img
-            src="./images/mole_bomb.png"
-            alt="mallet"
-            class=""
-            width="42px"
-            height="31px"
-          />
-          hit is <b>-100</b> points.
-        </li>
-        <li>Every <b>1000</b> points you get to a new level.</li>
-        <li>Finish level 5 to win!</li>
-        <li>Press <i>escape</i> button to end game.</li>
-      </ul> -->
       <button class="to-hide" id="start-button">Start Game</button>
-      <div style="display: none">
+      <div id="highscoresContainer" style="display: none">
         <h5>Highscores:</h5>
         <ol id="highscores">
           <li></li>
@@ -168,10 +119,8 @@
                     height="40px"
                   />
                 </span>
-                by clicking on the moles!
-              </li>
-              <li>
-                Every mole<span>
+                by clicking on the moles
+                <span>
                   <img
                     src="./images/mole_1.png"
                     alt="mallet"
@@ -180,7 +129,6 @@
                     height="31px"
                   />
                 </span>
-                hit is <b>+100</b> points.
               </li>
               <li>
                 Every mole<span>
@@ -200,9 +148,10 @@
                   width="42px"
                   height="31px"
                 />
-                hit is <b>-100</b> points.
+                hit is <b>-1</b
+                ><span style="color: red; font-size: 20px"> ♥</span>
               </li>
-              <li>Every <b>1000</b> points you get to a new level.</li>
+              <li>Every <b>10</b> moles hit you get to a new level.</li>
               <li>Finish level 5 to win!</li>
               <li>Press <i>escape</i> button to end game.</li>
             </ul>
