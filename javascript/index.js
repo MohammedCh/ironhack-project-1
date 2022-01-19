@@ -99,10 +99,13 @@ let molesArr;
 let gameRunning;
 function startGame() {
   initializeGame();
-  setTimeout(() => {
-    //delay at start of game
-    startPoppingUp();
-  }, 1000);
+  //delay at start of game
+  window.requestTimeout(() => startPoppingUp(), 1000);
+
+  //   setTimeout(() => {
+  //     //delay at start of game
+  //     startPoppingUp();
+  //   }, 1000);
 }
 //function that does all things that have to happen at start of the game once
 function initializeGame() {
@@ -139,7 +142,7 @@ function startPoppingUp() {
   } else {
     moleIndex = popUpBomb();
   }
-  setTimeout(() => {
+  window.requestTimeout(() => {
     if (molesArr[moleIndex].state != "underground" && !gamePaused) {
       if (molesArr[moleIndex].state != "bomb") {
         livesUpdate(lives - 1);
@@ -147,9 +150,21 @@ function startPoppingUp() {
       hideMole(moleIndex);
     }
   }, 2000);
-  setTimeout(() => {
+
+  //   setTimeout(() => {
+  //     if (molesArr[moleIndex].state != "underground" && !gamePaused) {
+  //       if (molesArr[moleIndex].state != "bomb") {
+  //         livesUpdate(lives - 1);
+  //       }
+  //       hideMole(moleIndex);
+  //     }
+  //   }, 2000);
+  window.requestTimeout(() => {
     if (gameRunning && !gamePaused) requestAnimationFrame(startPoppingUp);
   }, gameSpeed);
+//   setTimeout(() => {
+//     if (gameRunning && !gamePaused) requestAnimationFrame(startPoppingUp);
+//   }, gameSpeed);
 }
 
 let gameSpeed;
@@ -269,9 +284,12 @@ function showPow(event) {
   popup.style.cssText = `position: absolute; top: ${
     event.pageY - 100
   }px; left: ${event.pageX - 80}px`;
-  setTimeout(() => {
+  window.requestTimeout(() => {
     popup.setAttribute("style", "display:none");
   }, 250);
+//   setTimeout(() => {
+//     popup.setAttribute("style", "display:none");
+//   }, 250);
   playSound("./sounds/hit.wav");
 }
 
@@ -437,7 +455,10 @@ function resumeGame() {
   gamePaused = false;
   molesArr.forEach((e) => {
     if (e.state === "surface" || e.state === "bomb") {
-      setTimeout(() => {
+    //   setTimeout(() => {
+    //     hideMole(molesArr.indexOf(e));
+    //   }, 2000);
+      window.requestTimeout(() => {
         hideMole(molesArr.indexOf(e));
       }, 2000);
     }
@@ -447,3 +468,72 @@ function resumeGame() {
     startPoppingUp();
   }, 1000);
 }
+
+// requestAnimationFrame() shim by Paul Irish
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+window.requestAnimFrame = (function () {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function (/* function */ callback, /* DOMElement */ element) {
+      window.setTimeout(callback, 1000 / 60);
+    }
+  );
+})();
+
+/**
+ * Behaves the same as setTimeout except uses requestAnimationFrame() where possible for better performance
+ * @param {function} fn The callback function
+ * @param {int} delay The delay in milliseconds
+ */
+
+window.requestTimeout = function (fn, delay) {
+  if (
+    !window.requestAnimationFrame &&
+    !window.webkitRequestAnimationFrame &&
+    !(
+      window.mozRequestAnimationFrame && window.mozCancelRequestAnimationFrame
+    ) && // Firefox 5 ships without cancel support
+    !window.oRequestAnimationFrame &&
+    !window.msRequestAnimationFrame
+  )
+    return window.setTimeout(fn, delay);
+
+  var start = new Date().getTime(),
+    handle = new Object();
+
+  function loop() {
+    var current = new Date().getTime(),
+      delta = current - start;
+
+    delta >= delay ? fn.call() : (handle.value = requestAnimFrame(loop));
+  }
+
+  handle.value = requestAnimFrame(loop);
+  return handle;
+};
+
+/**
+ * Behaves the same as clearTimeout except uses cancelRequestAnimationFrame() where possible for better performance
+ * @param {int|object} fn The callback function
+ */
+window.clearRequestTimeout = function (handle) {
+  window.cancelAnimationFrame
+    ? window.cancelAnimationFrame(handle.value)
+    : window.webkitCancelAnimationFrame
+    ? window.webkitCancelAnimationFrame(handle.value)
+    : window.webkitCancelRequestAnimationFrame
+    ? window.webkitCancelRequestAnimationFrame(
+        handle.value
+      ) /* Support for legacy API */
+    : window.mozCancelRequestAnimationFrame
+    ? window.mozCancelRequestAnimationFrame(handle.value)
+    : window.oCancelRequestAnimationFrame
+    ? window.oCancelRequestAnimationFrame(handle.value)
+    : window.msCancelRequestAnimationFrame
+    ? window.msCancelRequestAnimationFrame(handle.value)
+    : clearTimeout(handle);
+};
