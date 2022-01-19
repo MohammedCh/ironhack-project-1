@@ -4,18 +4,20 @@ window.onload = () => {
 
     canvas.addEventListener("mousedown", function (e) {
       checkIfHelpAsked(getCursorPosition(canvas, e));
+      checkIfGamePaused(getCursorPosition(canvas, e));
       checkIfMoleIsHit(getCursorPosition(canvas, e), e);
     });
+
+    modalCloseBtns = document.getElementsByClassName("modal-btn");
+    for (const btn of modalCloseBtns) {
+      btn.addEventListener("click", () => resumeGame());
+    }
   };
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && gameRunning) {
       endGame();
     }
   });
-  modalCloseBtns = document.getElementsByClassName("modal-btn");
-  for (const btn of modalCloseBtns) {
-    btn.addEventListener("click", () => resumeGame());
-  }
 };
 
 class sound {
@@ -97,9 +99,11 @@ let molesArr;
 let gameRunning;
 function startGame() {
   initializeGame();
-  startPoppingUp();
+  setTimeout(() => {
+    //delay at start of game
+    startPoppingUp();
+  }, 1000);
 }
-
 //function that does all things that have to happen at start of the game once
 function initializeGame() {
   resetVariables();
@@ -107,43 +111,45 @@ function initializeGame() {
   const questionMarkImg = new Image();
   questionMarkImg.src = "./images/questionMark.png";
   questionMarkImg.addEventListener("load", () => {
-    ctx.drawImage(questionMarkImg, canvas.width - 50, 0, 50, 50);
+    ctx.drawImage(questionMarkImg, canvas.width - 52, 0, 50, 50);
+  });
+  const playPause = new Image();
+  playPause.src = "./images/playPause.png";
+  playPause.addEventListener("load", () => {
+    ctx.drawImage(playPause, canvas.width - 110, 0, 50, 50);
   });
 }
 
 let popUpsWithNoBomb;
 // function that keeps the moles popping up while game is running
+
 function startPoppingUp() {
-  if (gameRunning) {
-    setTimeout(() => {
-      let moleIndex = randomMolePicker();
-      //if below guarantees there is a bomb after 5 no bombs
-      if (popUpsWithNoBomb > 5) {
-        moleIndex = popUpBomb();
-        popUpsWithNoBomb = 0;
+  let moleIndex = randomMolePicker();
+  //if below guarantees there is a bomb after 5 no bombs
+  if (popUpsWithNoBomb > 5 && !gamePaused) {
+    moleIndex = popUpBomb();
+    popUpsWithNoBomb = 0;
 
-        //if random index returned is lower the number of moles, then pop up a mole
-      } else if (moleIndex <= molesArr.length - 1) {
-        popUpMole(moleIndex);
-        popUpsWithNoBomb += 1;
+    //if random index returned is lower the number of moles, then pop up a mole
+  } else if (moleIndex <= molesArr.length - 1 && !gamePaused) {
+    popUpMole(moleIndex);
+    popUpsWithNoBomb += 1;
 
-        //else if above number of moles, then pop up bomb instead
-      } else {
-        moleIndex = popUpBomb();
-      }
-      setTimeout(() => {
-        if (molesArr[moleIndex].state != "underground" && gameRunning) {
-          if (molesArr[moleIndex].state != "bomb") {
-            livesUpdate(lives - 1);
-          }
-          hideMole(moleIndex);
-        }
-      }, 2000);
-      setTimeout(() => {
-        if (gameRunning) requestAnimationFrame(startPoppingUp);
-      }, gameSpeed);
-    }, 1000);
+    //else if above number of moles, then pop up bomb instead
+  } else {
+    moleIndex = popUpBomb();
   }
+  setTimeout(() => {
+    if (molesArr[moleIndex].state != "underground" && !gamePaused) {
+      if (molesArr[moleIndex].state != "bomb") {
+        livesUpdate(lives - 1);
+      }
+      hideMole(moleIndex);
+    }
+  }, 2000);
+  setTimeout(() => {
+    if (gameRunning && !gamePaused) requestAnimationFrame(startPoppingUp);
+  }, gameSpeed);
 }
 
 let gameSpeed;
@@ -197,36 +203,38 @@ function getCursorPosition(canvas, event) {
 
 //checks if there is a mole popping up at the location the mouse clicks
 function checkIfMoleIsHit(cursorClickPosition, event) {
-  molesArr.forEach((element) => {
-    if (
-      cursorClickPosition.x >= element.x &&
-      cursorClickPosition.x <= element.x + 83 &&
-      cursorClickPosition.y >= element.y &&
-      cursorClickPosition.y <= element.y + 62 &&
-      element.state === "bomb"
-    ) {
-      console.log("kaboom");
-      playSound("./sounds/explosion.mp3");
-      hideMole(molesArr.indexOf(element));
-      livesUpdate(lives - 1);
-    } else if (
-      cursorClickPosition.x >= element.x &&
-      cursorClickPosition.x <= element.x + 83 &&
-      cursorClickPosition.y >= element.y &&
-      cursorClickPosition.y <= element.y + 62 &&
-      element.state === "surface"
-    ) {
-      console.log("hit");
-      hideMole(molesArr.indexOf(element));
-      pointsUpdate(points + 100);
-      showPow(event);
-    }
-  });
+  if (!gamePaused) {
+    molesArr.forEach((element) => {
+      if (
+        cursorClickPosition.x >= element.x &&
+        cursorClickPosition.x <= element.x + 83 &&
+        cursorClickPosition.y >= element.y &&
+        cursorClickPosition.y <= element.y + 62 &&
+        element.state === "bomb"
+      ) {
+        console.log("kaboom");
+        playSound("./sounds/explosion.mp3");
+        hideMole(molesArr.indexOf(element));
+        livesUpdate(lives - 1);
+      } else if (
+        cursorClickPosition.x >= element.x &&
+        cursorClickPosition.x <= element.x + 83 &&
+        cursorClickPosition.y >= element.y &&
+        cursorClickPosition.y <= element.y + 62 &&
+        element.state === "surface"
+      ) {
+        console.log("hit");
+        hideMole(molesArr.indexOf(element));
+        pointsUpdate(points + 100);
+        showPow(event);
+      }
+    });
+  }
 }
 
 function checkIfHelpAsked(cursorClickPosition) {
   if (
-    cursorClickPosition.x >= canvas.width - 50 &&
+    cursorClickPosition.x >= canvas.width - 52 &&
     cursorClickPosition.x <= canvas.width &&
     cursorClickPosition.y >= 0 &&
     cursorClickPosition.y <= 50
@@ -242,6 +250,16 @@ function checkIfHelpAsked(cursorClickPosition) {
   }
 }
 
+function checkIfGamePaused(cursorClickPosition) {
+  if (
+    cursorClickPosition.x >= canvas.width - 110 &&
+    cursorClickPosition.x <= canvas.width - 52 &&
+    cursorClickPosition.y >= 0 &&
+    cursorClickPosition.y <= 50
+  ) {
+    gamePaused ? resumeGame() : pauseGame();
+  }
+}
 //shows the popup image with "pow" where the mouse hits a mole
 function showPow(event) {
   const popup = document.getElementById("popup");
@@ -292,6 +310,7 @@ function endGame(wonGameBoolean) {
 //function used if game ends
 function resetVariables() {
   gameRunning = true;
+  gamePaused = false;
   pointsUpdate(0);
   livesAtGameStart = 3;
   livesUpdate(livesAtGameStart);
@@ -397,10 +416,21 @@ function checkIfNewHighscore() {
   if (arr[0] != 0) listParent.style = "display: block";
 }
 
+let gamePaused;
 function pauseGame() {
-  gameRunning = false;
+  gamePaused = true;
 }
 function resumeGame() {
-  gameRunning = true;
-  startPoppingUp();
+  gamePaused = false;
+  molesArr.forEach((e) => {
+    if (e.state === "surface" || e.state === "bomb") {
+      setTimeout(() => {
+        hideMole(molesArr.indexOf(e));
+      }, 2000);
+    }
+  });
+  setTimeout(() => {
+    //delay before popping again
+    startPoppingUp();
+  }, 1000);
 }

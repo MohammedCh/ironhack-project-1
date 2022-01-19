@@ -12,6 +12,7 @@
 body {
   padding: 2% 0;
   text-align: center;
+  -webkit-text-stroke: 0.5px white;
 }
 
 html::after {
