@@ -225,7 +225,7 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
       ) {
         console.log("hit");
         hideMole(molesArr.indexOf(element));
-        pointsUpdate(points + 100);
+        molePointsUpdate(molePoints + 1);
         showPow(event);
       }
     });
@@ -258,10 +258,7 @@ function checkIfGamePaused(cursorClickPosition) {
     cursorClickPosition.y <= 50
   ) {
     if (!gamePaused) {
-      triggerModal(
-        "Game paused",
-        `Click on the OK button to resume`
-      );
+      triggerModal("Game paused", `Click on the OK button to resume`);
     }
     //gamePaused ? resumeGame() : pauseGame();
   }
@@ -278,7 +275,7 @@ function showPow(event) {
   playSound("./sounds/hit.wav");
 }
 
-let points;
+let molePoints;
 
 //this function hides or shows elements on the UI upon starting the game
 function hideOrShowElements(hideOrShow) {
@@ -305,7 +302,7 @@ function endGame(wonGameBoolean) {
     playSound("./sounds/win.wav");
     playSound("./sounds/yes.wav");
   } else {
-    triggerModal("Game ended", `Your score was ${points}`);
+    triggerModal("Game ended", `Your score was ${molePoints}`);
     playSound("./sounds/endGame.wav");
   }
   checkIfNewHighscore();
@@ -317,13 +314,14 @@ function endGame(wonGameBoolean) {
 function resetVariables() {
   gameRunning = true;
   gamePaused = false;
-  pointsUpdate(0);
   livesAtGameStart = 3;
   livesUpdate(livesAtGameStart);
   moleLocationArr = moleLocations(8);
   molesArr = moleCreator(moleLocationArr);
   popUpsWithNoBomb = 0;
-  level = 1;
+  level = 0;
+  levelUp();
+  molePointsUpdate(0);
   gameSpeed = 2000;
 }
 
@@ -344,24 +342,28 @@ function livesUpdate(number) {
   ctx.fillText(`${livesText}`, canvas.width - 120, canvas.height - 10);
 }
 
-function pointsUpdate(number) {
-  points = number;
+function molePointsUpdate(number) {
+  molePoints = number;
   if (
-    points === 1000 ||
-    points === 2000 ||
-    points === 3000 ||
-    points === 4000
+    molePoints === 10 ||
+    molePoints === 20 ||
+    molePoints === 30 ||
+    molePoints === 40
   ) {
     levelUp();
     triggerModal("Level Up!", `Congrats, you are now in level ${level}!`);
   }
-  if (points === 5000) {
+  if (molePoints === 50) {
     endGame(true);
   }
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
-  ctx.clearRect(10, canvas.height - 40, 400, 30);
-  ctx.fillText(`Points: ${points}`, 10, canvas.height - 10);
+  ctx.clearRect(10, canvas.height - 38, 400, 29);
+  ctx.fillText(
+    `Moles: ${molePoints} / ${molesToNextLevel}`,
+    10,
+    canvas.height - 10
+  );
 }
 
 function playSound(url) {
@@ -370,10 +372,15 @@ function playSound(url) {
 }
 
 let level;
+let molesToNextLevel;
 function levelUp() {
   level++;
-  console.log(level);
+  molesToNextLevel = level * 10;
   gameSpeed -= 300;
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
+  ctx.clearRect(10, canvas.height - 69, 200, 29);
+  ctx.fillText(`Level: ${level}`, 10, canvas.height - 40);
 }
 
 //functions that creates popups
@@ -402,9 +409,9 @@ function checkIfNewHighscore() {
       arr.push(parseFloat(el.innerHTML));
     }
   }
-  //if last element of (sorted) array is smaller than points then update
-  if (points > arr[arr.length - 1]) {
-    arr[arr.length - 1] = points;
+  //if last element of (sorted) array is smaller than molePoints then update
+  if (molePoints > arr[arr.length - 1]) {
+    arr[arr.length - 1] = molePoints;
   }
 
   //sort array in descending format
