@@ -1,6 +1,7 @@
 // ----EVENT LISTENERS----
 window.onload = () => {
   setCanvasSize(); //responsive size
+  checkIfNewHighscore(); //show highscores on front page
 
   document.getElementById("start-button").onclick = () => {
     startGame();
@@ -215,25 +216,24 @@ function hideOrShowElements(hideOrShow) {
 function startPoppingUp() {
   let moleIndex = randomMolePicker();
   //if below guarantees there is a bomb after 5 no bombs
-  if (popUpsWithNoBomb > 5 && !gamePaused) {
+  if (popUpsWithNoBomb > 5 && !gamePaused && gameRunning) {
     moleIndex = popUpBomb();
     popUpsWithNoBomb = 0;
 
     //if random index returned is lower the number of moles, then pop up a mole
-  } else if (moleIndex <= molesArr.length - 1 && !gamePaused) {
+  } else if (moleIndex <= molesArr.length - 1 && !gamePaused && gameRunning) {
     popUpMole(moleIndex);
     popUpsWithNoBomb += 1;
 
     //else if above number of moles, then pop up bomb instead
-  } else if (!gamePaused) {
+  } else if (!gamePaused && gameRunning) {
     moleIndex = popUpBomb();
   }
-  if (!gamePaused)
+  if (!gamePaused && gameRunning)
     window.requestTimeout(() => {
       if (molesArr[moleIndex].state != "underground") {
         if (molesArr[moleIndex].state != "bomb") {
           livesUpdate(lives - 1);
-          console.log("bye " + moleIndex);
         }
         hideMole(moleIndex);
       }
@@ -485,16 +485,16 @@ function checkIfNewHighscore() {
   const orderedList = document.getElementById("highscores");
   const list = orderedList.children;
   const listParent = orderedList.parentElement;
-  const arr = [];
-
-  //add all highscore elements to arr from DOM. If no value add 0.
-  for (const el of list) {
-    if (el.innerHTML === "") {
-      arr.push(0);
-    } else {
-      arr.push(parseFloat(el.innerHTML));
-    }
+  localStorageStr = JSON.parse(localStorage.getItem("highscores")); //retrieve from local storage
+  let arr = [];
+  console.log(JSON.parse(localStorage.getItem("highscores")))
+  //if null then create arr with 0 values, else take values from localStorage
+  if (JSON.parse(localStorage.getItem("highscores"))[0] === null) {
+    arr = [0, 0, 0];
+  } else {
+    arr = Array.from(localStorageStr);
   }
+
   //if last element of (sorted) array is smaller than molePoints then update
   if (molePoints > arr[arr.length - 1]) {
     arr[arr.length - 1] = molePoints;
@@ -506,6 +506,10 @@ function checkIfNewHighscore() {
       return a - b;
     })
     .reverse();
+
+  console.log(arr);
+  //add to localStorage
+  localStorage.setItem("highscores", JSON.stringify(arr));
 
   //update highscore on html
   for (let i = 0; i < arr.length; i++) {
