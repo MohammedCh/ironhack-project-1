@@ -489,7 +489,7 @@ function checkIfNewHighscore() {
   let arr = [];
 
   //if null then create arr with 0 values, else take values from localStorage
-  if (JSON.parse(localStorage.getItem("highscores"))[0] === null) {
+  if (localStorageStr === null) {
     arr = [0, 0, 0];
   } else {
     arr = Array.from(localStorageStr);
