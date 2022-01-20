@@ -143,9 +143,8 @@ function startPoppingUp() {
         livesUpdate(lives - 1);
       }
       hideMole(moleIndex);
-      console.log("BYE " + performance.now());
     }
-  }, 2000);
+  }, gameSpeed);
 
   window.requestTimeout(() => {
     if (gameRunning && !gamePaused) requestAnimationFrame(startPoppingUp);
@@ -169,7 +168,6 @@ function replaceMole(moleIndex, imgSrc, state) {
 function popUpMole(moleIndex) {
   replaceMole(moleIndex, "./images/mole_1.png", "surface");
   playSound("./sounds/pop.ogg");
-  console.log("HI " + performance.now());
 }
 //function changes mole pic, making a bomb pop up, returns index where bomb popped up
 function popUpBomb() {
@@ -178,7 +176,6 @@ function popUpBomb() {
     randomIndex = randomMolePicker();
   }
   replaceMole(randomIndex, "./images/mole_bomb.png", "bomb");
-  console.log("bombTIME "+ performance.now());
   return randomIndex;
 }
 //function changes to hole pic, making mole hide
@@ -186,12 +183,19 @@ function hideMole(moleIndex) {
   replaceMole(moleIndex, "./images/mole_hole.png", "underground");
 }
 
+let previousMoleIndex;
 //returns a random mole index based on the mole array created earlier
 function randomMolePicker() {
   //totalMoles is +1 the indices, but not deducted because of formula below. See next line comments for more info
   //also adding 1 every 5 moles, which will be the bombs
-  totalMoles = molesArr.length + Math.floor(molesArr.length / 5);
-  randomMoleIndex = Math.floor(Math.random() * totalMoles); //Math.random() * (max - min + 1) + min
+  let totalMoles = molesArr.length + Math.floor(molesArr.length / 5);
+  let randomMoleIndex = Math.floor(Math.random() * totalMoles); //Math.random() * (max - min + 1) + min
+  //The while loop in the next lines guarantees that the same index isn't picked twice
+  //this was causing a bug where the game was hiding an already hidden-through-hit mole
+  while (randomMoleIndex === previousMoleIndex) {
+    randomMoleIndex = Math.floor(Math.random() * totalMoles);
+  }
+  previousMoleIndex = randomMoleIndex;
   return randomMoleIndex;
 }
 
@@ -380,7 +384,7 @@ let molesToNextLevel;
 function levelUp() {
   level++;
   molesToNextLevel = level * 10;
-  gameSpeed -= 300;
+  gameSpeed -= 200;
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
   ctx.clearRect(10, canvas.height - 69, 200, 29);

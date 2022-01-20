@@ -134,7 +134,7 @@ function startPoppingUp() {
     popUpsWithNoBomb += 1;
 
     //else if above number of moles, then pop up bomb instead
-  } else {
+  } else if (!gamePaused) {
     moleIndex = popUpBomb();
   }
   window.requestTimeout(() => {
@@ -143,8 +143,9 @@ function startPoppingUp() {
         livesUpdate(lives - 1);
       }
       hideMole(moleIndex);
+      console.log("BYE " + performance.now());
     }
-  }, 3000);
+  }, 2000);
 
   window.requestTimeout(() => {
     if (gameRunning && !gamePaused) requestAnimationFrame(startPoppingUp);
@@ -168,6 +169,7 @@ function replaceMole(moleIndex, imgSrc, state) {
 function popUpMole(moleIndex) {
   replaceMole(moleIndex, "./images/mole_1.png", "surface");
   playSound("./sounds/pop.ogg");
+  console.log("HI " + performance.now());
 }
 //function changes mole pic, making a bomb pop up, returns index where bomb popped up
 function popUpBomb() {
@@ -176,6 +178,7 @@ function popUpBomb() {
     randomIndex = randomMolePicker();
   }
   replaceMole(randomIndex, "./images/mole_bomb.png", "bomb");
+  console.log("bombTIME "+ performance.now());
   return randomIndex;
 }
 //function changes to hole pic, making mole hide
@@ -222,7 +225,7 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
         cursorClickPosition.y <= element.y + 62 &&
         element.state === "surface"
       ) {
-        console.log("hit");
+        //console.log("hit");
         hideMole(molesArr.indexOf(element));
         molePointsUpdate(molePoints + 1);
         showPow(event);
@@ -330,6 +333,7 @@ function livesUpdate(number) {
   lives = number;
   if (lives === 0) {
     endGame();
+    return;
   }
   let livesText = "";
   for (let i = 0; i < lives; i++) {
@@ -354,6 +358,7 @@ function molePointsUpdate(number) {
   }
   if (molePoints === 50) {
     endGame(true);
+    return;
   }
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
@@ -422,9 +427,8 @@ function checkIfNewHighscore() {
 
   //update highscore on html
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] != 0) list[i].innerHTML = arr[i];
+    if (arr[i] != 0) list[i].innerHTML = arr[i] + " moles";
   }
-  console.log(arr[0]);
   if (arr[0] != 0) listParent.style = "display: block";
 }
 
@@ -443,11 +447,16 @@ function resumeGame() {
   });
   window.requestTimeout(() => {
     startPoppingUp();
-    if (level === 2) {
-      window.requestTimeout(() => {
-        startPoppingUp();
-      }, 1000);
-    }
+    // if (level === 2) {
+    //   window.requestTimeout(() => {
+    //     startPoppingUp();
+    //   }, 1000);
+    // }
+    // if (level === 4) {
+    //   window.requestTimeout(() => {
+    //     startPoppingUp();
+    //   }, 1500);
+    // }
   }, 1000);
 }
 
