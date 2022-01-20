@@ -1,3 +1,4 @@
+// ----EVENT LISTENERS----
 window.onload = () => {
   document.getElementById("start-button").onclick = () => {
     startGame();
@@ -36,6 +37,8 @@ class sound {
     };
   }
 }
+
+// ----CLASSES----
 class Mole {
   constructor(x, y, imgSrc, state) {
     this.x = x;
@@ -57,9 +60,24 @@ class Mole {
   }
 }
 
+// ----VARIABLES----
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
+let moleLocationArr; //array with where moles should be placed on the screen
+let molesArr; //array that contains the Moles
+let gameRunning; //boolean showing whether the game is running
+let popUpsWithNoBomb; //counter for consecutive moles popping up (no bombs)
+let gameSpeed; //miliseconds that decrease per level increasing the speed of the game
+let previousMoleIndex; //holds index of last popped up mole location
+let molePoints; //counter for how many moles were hit
+let lives; //lives counter
+let livesAtGameStart;
+let level; //level of the game
+let molesToNextLevel; //number of moles required to finish a level
+let gamePaused; //boolean showing whether the game is paused or not
+
+// ----FUNCTIONS----
 // moleLocations returns an array of objects each containing the
 // x and y coordinates of where moles should be on the canvas
 function moleLocations(numOfMoles) {
@@ -77,7 +95,6 @@ function moleLocations(numOfMoles) {
   }
   return arr;
 }
-let moleLocationArr;
 
 // moleCreator creates the mole objects on the canvas based on the
 // array of mole locations received, also returns array of moles
@@ -93,10 +110,7 @@ function moleCreator(moleLocArr) {
   }
   return arr;
 }
-// TODO remove const and the arr return from above if not used
-let molesArr;
 
-let gameRunning;
 function startGame() {
   initializeGame();
   //delay at start of game
@@ -118,9 +132,36 @@ function initializeGame() {
   });
 }
 
-let popUpsWithNoBomb;
-// function that keeps the moles popping up while game is running
+//function used when game starts
+function resetVariables() {
+  gameRunning = true;
+  gamePaused = false;
+  livesAtGameStart = 3;
+  livesUpdate(livesAtGameStart);
+  moleLocationArr = moleLocations(8);
+  molesArr = moleCreator(moleLocationArr);
+  popUpsWithNoBomb = 0;
+  level = 0;
+  levelUp();
+  molePointsUpdate(0);
+  gameSpeed = 2000;
+}
 
+//this function hides or shows elements on the UI upon starting the game
+function hideOrShowElements(hideOrShow) {
+  const toHide = document.querySelectorAll(".to-hide");
+  const toShow = document.querySelectorAll(".to-show");
+
+  if (hideOrShow === "hide") {
+    toHide.forEach((el) => (el.style.display = "none"));
+    toShow.forEach((el) => el.removeAttribute("style"));
+  } else {
+    toHide.forEach((el) => el.removeAttribute("style"));
+    toShow.forEach((el) => (el.style.display = "none"));
+  }
+}
+
+// function that keeps the moles popping up while game is running
 function startPoppingUp() {
   let moleIndex = randomMolePicker();
   //if below guarantees there is a bomb after 5 no bombs
@@ -151,8 +192,6 @@ function startPoppingUp() {
   }, gameSpeed);
 }
 
-let gameSpeed;
-
 //function replaces a single mole (img) with another
 function replaceMole(moleIndex, imgSrc, state) {
   molesArr[moleIndex].clear();
@@ -162,6 +201,21 @@ function replaceMole(moleIndex, imgSrc, state) {
     imgSrc,
     state
   );
+}
+
+//returns a random mole index based on the mole array created earlier
+function randomMolePicker() {
+  //totalMoles is +1 the indices, but not deducted because of formula below. See next line comments for more info
+  //also adding 1 every 5 moles, which will be the bombs
+  let totalMoles = molesArr.length + Math.floor(molesArr.length / 5);
+  let randomMoleIndex = Math.floor(Math.random() * totalMoles); //Math.random() * (max - min + 1) + min
+  //The while loop in the next lines guarantees that the same index isn't picked twice
+  //this was causing a bug where the game was hiding an already hidden-through-hit mole
+  while (randomMoleIndex === previousMoleIndex) {
+    randomMoleIndex = Math.floor(Math.random() * totalMoles);
+  }
+  previousMoleIndex = randomMoleIndex;
+  return randomMoleIndex;
 }
 
 //function changes mole pic, making mole pop up
@@ -181,22 +235,6 @@ function popUpBomb() {
 //function changes to hole pic, making mole hide
 function hideMole(moleIndex) {
   replaceMole(moleIndex, "./images/mole_hole.png", "underground");
-}
-
-let previousMoleIndex;
-//returns a random mole index based on the mole array created earlier
-function randomMolePicker() {
-  //totalMoles is +1 the indices, but not deducted because of formula below. See next line comments for more info
-  //also adding 1 every 5 moles, which will be the bombs
-  let totalMoles = molesArr.length + Math.floor(molesArr.length / 5);
-  let randomMoleIndex = Math.floor(Math.random() * totalMoles); //Math.random() * (max - min + 1) + min
-  //The while loop in the next lines guarantees that the same index isn't picked twice
-  //this was causing a bug where the game was hiding an already hidden-through-hit mole
-  while (randomMoleIndex === previousMoleIndex) {
-    randomMoleIndex = Math.floor(Math.random() * totalMoles);
-  }
-  previousMoleIndex = randomMoleIndex;
-  return randomMoleIndex;
 }
 
 //returns an object with {x:, y:} of canvas coordinates of where the mouse clicked
@@ -266,7 +304,6 @@ function checkIfGamePaused(cursorClickPosition) {
     if (!gamePaused) {
       triggerModal("Game paused", `Click on the OK button to resume`);
     }
-    //gamePaused ? resumeGame() : pauseGame();
   }
 }
 //shows the popup image with "pow" where the mouse hits a mole
@@ -281,24 +318,7 @@ function showPow(event) {
   playSound("./sounds/hit.wav");
 }
 
-let molePoints;
-
-//this function hides or shows elements on the UI upon starting the game
-function hideOrShowElements(hideOrShow) {
-  const toHide = document.querySelectorAll(".to-hide");
-  const toShow = document.querySelectorAll(".to-show");
-
-  if (hideOrShow === "hide") {
-    toHide.forEach((el) => (el.style.display = "none"));
-    toShow.forEach((el) => el.removeAttribute("style"));
-  } else {
-    toHide.forEach((el) => el.removeAttribute("style"));
-    toShow.forEach((el) => (el.style.display = "none"));
-  }
-}
-
-let lives;
-
+//called when game ends either when player dies, wins, or presses escape button
 function endGame(wonGameBoolean) {
   if (wonGameBoolean) {
     triggerModal(
@@ -316,23 +336,7 @@ function endGame(wonGameBoolean) {
   hideOrShowElements();
 }
 
-//function used if game ends
-function resetVariables() {
-  gameRunning = true;
-  gamePaused = false;
-  livesAtGameStart = 3;
-  livesUpdate(livesAtGameStart);
-  moleLocationArr = moleLocations(8);
-  molesArr = moleCreator(moleLocationArr);
-  popUpsWithNoBomb = 0;
-  level = 0;
-  levelUp();
-  molePointsUpdate(0);
-  gameSpeed = 2000;
-}
-
-let livesAtGameStart;
-
+//updating lives of remaining and ending game if 0
 function livesUpdate(number) {
   lives = number;
   if (lives === 0) {
@@ -379,8 +383,6 @@ function playSound(url) {
   mySound.play();
 }
 
-let level;
-let molesToNextLevel;
 function levelUp() {
   level++;
   molesToNextLevel = level * 10;
@@ -389,6 +391,23 @@ function levelUp() {
   ctx.fillStyle = "white";
   ctx.clearRect(10, canvas.height - 69, 200, 29);
   ctx.fillText(`Level: ${level}`, 10, canvas.height - 40);
+}
+
+function pauseGame() {
+  gamePaused = true;
+}
+function resumeGame() {
+  gamePaused = false;
+  molesArr.forEach((e) => {
+    if (e.state === "surface" || e.state === "bomb") {
+      window.requestTimeout(() => {
+        hideMole(molesArr.indexOf(e));
+      }, 2000);
+    }
+  });
+  window.requestTimeout(() => {
+    startPoppingUp();
+  }, 1000);
 }
 
 //functions that creates popups
@@ -434,34 +453,6 @@ function checkIfNewHighscore() {
     if (arr[i] != 0) list[i].innerHTML = arr[i] + " moles";
   }
   if (arr[0] != 0) listParent.style = "display: block";
-}
-
-let gamePaused;
-function pauseGame() {
-  gamePaused = true;
-}
-function resumeGame() {
-  gamePaused = false;
-  molesArr.forEach((e) => {
-    if (e.state === "surface" || e.state === "bomb") {
-      window.requestTimeout(() => {
-        hideMole(molesArr.indexOf(e));
-      }, 2000);
-    }
-  });
-  window.requestTimeout(() => {
-    startPoppingUp();
-    // if (level === 2) {
-    //   window.requestTimeout(() => {
-    //     startPoppingUp();
-    //   }, 1000);
-    // }
-    // if (level === 4) {
-    //   window.requestTimeout(() => {
-    //     startPoppingUp();
-    //   }, 1500);
-    // }
-  }, 1000);
 }
 
 // requestAnimationFrame() shim by Paul Irish
