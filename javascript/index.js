@@ -1,5 +1,7 @@
 // ----EVENT LISTENERS----
 window.onload = () => {
+  setCanvasSize(); //responsive size
+
   document.getElementById("start-button").onclick = () => {
     startGame();
 
@@ -20,23 +22,6 @@ window.onload = () => {
     }
   });
 };
-
-class sound {
-  constructor(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
-    this.play = function () {
-      this.sound.play();
-    };
-    this.stop = function () {
-      this.sound.pause();
-    };
-  }
-}
 
 // ----CLASSES----
 class Mole {
@@ -60,6 +45,23 @@ class Mole {
   }
 }
 
+class sound {
+  constructor(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function () {
+      this.sound.play();
+    };
+    this.stop = function () {
+      this.sound.pause();
+    };
+  }
+}
+
 // ----VARIABLES----
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -76,12 +78,29 @@ let livesAtGameStart;
 let level; //level of the game
 let molesToNextLevel; //number of moles required to finish a level
 let gamePaused; //boolean showing whether the game is paused or not
+let numberOfmoles; //number of total moles/holes on screen
 
 // ----FUNCTIONS----
+//function used when game starts
+function resetVariables() {
+  gameRunning = true;
+  gamePaused = false;
+  livesAtGameStart = 3;
+  livesUpdate(livesAtGameStart);
+  numberOfmoles = 8;
+  moleLocationArr = moleLocations(numberOfmoles);
+  molesArr = moleCreator(moleLocationArr);
+  popUpsWithNoBomb = 0;
+  level = 0;
+  levelUp();
+  molePointsUpdate(0);
+  gameSpeed = 2000;
+}
+
 // moleLocations returns an array of objects each containing the
 // x and y coordinates of where moles should be on the canvas
 function moleLocations(numOfMoles) {
-  const radius = 150;
+  const radius = 140;
   const step = (2 * Math.PI) / numOfMoles;
   let angle = 0;
   const arr = [];
@@ -130,21 +149,6 @@ function initializeGame() {
   playPause.addEventListener("load", () => {
     ctx.drawImage(playPause, canvas.width - 110, 0, 50, 50);
   });
-}
-
-//function used when game starts
-function resetVariables() {
-  gameRunning = true;
-  gamePaused = false;
-  livesAtGameStart = 3;
-  livesUpdate(livesAtGameStart);
-  moleLocationArr = moleLocations(8);
-  molesArr = moleCreator(moleLocationArr);
-  popUpsWithNoBomb = 0;
-  level = 0;
-  levelUp();
-  molePointsUpdate(0);
-  gameSpeed = 2000;
 }
 
 //this function hides or shows elements on the UI upon starting the game
@@ -370,7 +374,7 @@ function molePointsUpdate(number) {
   }
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
-  ctx.clearRect(10, canvas.height - 38, 400, 29);
+  ctx.clearRect(10, canvas.height - 38, 200, 29);
   ctx.fillText(
     `Moles: ${molePoints} / ${molesToNextLevel}`,
     10,
@@ -453,6 +457,23 @@ function checkIfNewHighscore() {
     if (arr[i] != 0) list[i].innerHTML = arr[i] + " moles";
   }
   if (arr[0] != 0) listParent.style = "display: block";
+}
+
+function setCanvasSize() {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  console.log(width);
+  if (width >= 769) {
+    canvas.setAttribute("width", "750px");
+    canvas.setAttribute("height", "500px");
+    return;
+  }
+  if (width >= 481) {
+    canvas.setAttribute("width", "500px");
+    canvas.setAttribute("height", "500px");
+    //document.body.style = "margin-right: 20%";
+    return;
+  }
 }
 
 // requestAnimationFrame() shim by Paul Irish
