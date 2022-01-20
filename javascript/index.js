@@ -443,7 +443,7 @@ function levelUp() {
     endGame(true);
     return;
   }
-  molesToNextLevel = level * 3;
+  molesToNextLevel = level * 10;
   gameSpeed -= 200;
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
@@ -480,14 +480,14 @@ function triggerModal(title, content) {
   myModal.show();
 }
 
-//functions called at endGame() that checks and updates highscores
+//functions called at endGame() that checks and updates highscores. Stores in localStorage
 function checkIfNewHighscore() {
   const orderedList = document.getElementById("highscores");
   const list = orderedList.children;
   const listParent = orderedList.parentElement;
   localStorageStr = JSON.parse(localStorage.getItem("highscores")); //retrieve from local storage
   let arr = [];
-  console.log(JSON.parse(localStorage.getItem("highscores")))
+
   //if null then create arr with 0 values, else take values from localStorage
   if (JSON.parse(localStorage.getItem("highscores"))[0] === null) {
     arr = [0, 0, 0];
@@ -507,7 +507,6 @@ function checkIfNewHighscore() {
     })
     .reverse();
 
-  console.log(arr);
   //add to localStorage
   localStorage.setItem("highscores", JSON.stringify(arr));
 
@@ -520,7 +519,6 @@ function checkIfNewHighscore() {
 
 function setCanvasSize() {
   const width = window.innerWidth;
-  const height = window.innerHeight;
   if (width >= 769) {
     canvas.setAttribute("width", "750px");
     canvas.setAttribute("height", "500px");
