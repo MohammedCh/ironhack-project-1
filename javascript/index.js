@@ -78,39 +78,84 @@ let livesAtGameStart;
 let level; //level of the game
 let molesToNextLevel; //number of moles required to finish a level
 let gamePaused; //boolean showing whether the game is paused or not
-let numberOfmoles; //number of total moles/holes on screen
+let numberOfMoles; //number of total moles/holes on screen
 
 // ----FUNCTIONS----
 //function used when game starts
 function resetVariables() {
+  gameSpeed = 2000;
   gameRunning = true;
   gamePaused = false;
   livesAtGameStart = 3;
   livesUpdate(livesAtGameStart);
-  numberOfmoles = 8;
-  moleLocationArr = moleLocations(numberOfmoles);
+  numberOfMoles = 8;
+  moleLocationArr = moleLocations(numberOfMoles);
   molesArr = moleCreator(moleLocationArr);
   popUpsWithNoBomb = 0;
   level = 0;
   levelUp();
   molePointsUpdate(0);
-  gameSpeed = 2000;
 }
 
 // moleLocations returns an array of objects each containing the
 // x and y coordinates of where moles should be on the canvas
 function moleLocations(numOfMoles) {
-  const radius = 140;
-  const step = (2 * Math.PI) / numOfMoles;
-  let angle = 0;
   const arr = [];
+  if (numberOfMoles % 3 === 0) {
+    for (let j = 2; j < 5; j++) {
+      for (let k = 2; k < 2 + numberOfMoles / 3; k++) {
+        arr.push({
+          x: (canvas.width / 6.5) * j,
+          y: (canvas.height / 5.5) * k - canvas.height / 6,
+        });
+      }
+    }
+    return arr;
+  } else if (numberOfMoles % 5 === 0) {
+    for (let j = 2; j < 4; j++) {
+      for (let k = 2; k < 2 + numberOfMoles / 2; k++) {
+        arr.push({
+          x: (canvas.width / 8.5) * k,
+          y: (canvas.height / 6) * j,
+        });
+      }
+    }
+    return arr;
+  } else if (numberOfMoles > 10) {
+    const radius = 160;
+    const radius2 = 60;
+    const step = (2 * Math.PI) / 9;
+    const step2 = (2 * Math.PI) / (numberOfMoles - 9);
+    let angle = 0;
 
-  for (let i = 0; i < numOfMoles; i++) {
-    arr.push({
-      x: canvas.width / 2 + radius * Math.cos(angle), //aranges them in circular format
-      y: canvas.height / 3 + radius * Math.sin(angle),
-    });
-    angle += step;
+    for (let i = 0; i < 9; i++) {
+      arr.push({
+        x: canvas.width / 2 + radius * Math.cos(angle), //aranges them in circular format
+        y: canvas.height / 3 + radius * Math.sin(angle),
+      });
+      angle += step;
+    }
+    angle = 0;
+    for (let i = 0; i < numberOfMoles - 9; i++) {
+      arr.push({
+        x: canvas.width / 2 + radius2 * Math.cos(angle), //aranges them in circular format
+        y: canvas.height / 3 + radius2 * Math.sin(angle),
+      });
+      angle += step2;
+    }
+    return arr;
+  } else {
+    const radius = 140;
+    const step = (2 * Math.PI) / numOfMoles;
+    let angle = 0;
+
+    for (let i = 0; i < numOfMoles; i++) {
+      arr.push({
+        x: canvas.width / 2 + radius * Math.cos(angle), //aranges them in circular format
+        y: canvas.height / 3 + radius * Math.sin(angle),
+      });
+      angle += step;
+    }
   }
   return arr;
 }
@@ -137,6 +182,7 @@ function startGame() {
 }
 //function that does all things that have to happen at start of the game once
 function initializeGame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   resetVariables();
   hideOrShowElements("hide");
   const questionMarkImg = new Image();
@@ -182,18 +228,21 @@ function startPoppingUp() {
   } else if (!gamePaused) {
     moleIndex = popUpBomb();
   }
-  window.requestTimeout(() => {
-    if (molesArr[moleIndex].state != "underground" && !gamePaused) {
-      if (molesArr[moleIndex].state != "bomb") {
-        livesUpdate(lives - 1);
+  if (!gamePaused)
+    window.requestTimeout(() => {
+      if (molesArr[moleIndex].state != "underground") {
+        if (molesArr[moleIndex].state != "bomb") {
+          livesUpdate(lives - 1);
+          console.log("bye " + moleIndex);
+        }
+        hideMole(moleIndex);
       }
-      hideMole(moleIndex);
-    }
-  }, gameSpeed);
-
-  window.requestTimeout(() => {
-    if (gameRunning && !gamePaused) requestAnimationFrame(startPoppingUp);
-  }, gameSpeed);
+    }, gameSpeed);
+  if (gameRunning && !gamePaused) {
+    window.requestTimeout(() => {
+      requestAnimationFrame(startPoppingUp);
+    }, gameSpeed);
+  }
 }
 
 //function replaces a single mole (img) with another
@@ -271,9 +320,9 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
         cursorClickPosition.y <= element.y + 62 &&
         element.state === "surface"
       ) {
-        //console.log("hit");
+        console.log("hit");
+        requestTimeout(() => molePointsUpdate(molePoints + 1), 10);
         hideMole(molesArr.indexOf(element));
-        molePointsUpdate(molePoints + 1);
         showPow(event);
       }
     });
@@ -342,7 +391,9 @@ function endGame(wonGameBoolean) {
 
 //updating lives of remaining and ending game if 0
 function livesUpdate(number) {
-  lives = number;
+  if (!gamePaused) {
+    lives = number;
+  }
   if (lives === 0) {
     endGame();
     return;
@@ -357,20 +408,19 @@ function livesUpdate(number) {
   ctx.fillText(`${livesText}`, canvas.width - 120, canvas.height - 10);
 }
 
+//a function that updates a player's points or moles hit
 function molePointsUpdate(number) {
   molePoints = number;
-  if (
-    molePoints === 10 ||
-    molePoints === 20 ||
-    molePoints === 30 ||
-    molePoints === 40
-  ) {
+  if (molePoints === molesToNextLevel) {
     levelUp();
+    if (level === 6) {
+      return;
+    }
     triggerModal("Level Up!", `Congrats, you are now in level ${level}!`);
-  }
-  if (molePoints === 50) {
-    endGame(true);
-    return;
+    ctx.clearRect(0, 0, canvas.width - 110, canvas.height - 100);
+    numberOfMoles++;
+    moleLocationArr = moleLocations(numberOfMoles);
+    molesArr = moleCreator(moleLocationArr);
   }
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
@@ -389,7 +439,11 @@ function playSound(url) {
 
 function levelUp() {
   level++;
-  molesToNextLevel = level * 10;
+  if (level === 6) {
+    endGame(true);
+    return;
+  }
+  molesToNextLevel = level * 3;
   gameSpeed -= 200;
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
@@ -402,6 +456,7 @@ function pauseGame() {
 }
 function resumeGame() {
   gamePaused = false;
+  //set delay before hiding moles, otherwise player can miss them after pause
   molesArr.forEach((e) => {
     if (e.state === "surface" || e.state === "bomb") {
       window.requestTimeout(() => {
@@ -411,17 +466,17 @@ function resumeGame() {
   });
   window.requestTimeout(() => {
     startPoppingUp();
-  }, 1000);
+  }, 2000);
 }
 
 //functions that creates popups
 function triggerModal(title, content) {
+  pauseGame();
   document.getElementById("staticBackdropLabel").innerHTML = title;
   document.getElementById("modalBody").innerHTML = content;
   const myModal = new bootstrap.Modal(
     document.getElementById("staticBackdrop")
   );
-  pauseGame();
   myModal.show();
 }
 
@@ -462,7 +517,6 @@ function checkIfNewHighscore() {
 function setCanvasSize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
-  console.log(width);
   if (width >= 769) {
     canvas.setAttribute("width", "750px");
     canvas.setAttribute("height", "500px");
@@ -471,7 +525,6 @@ function setCanvasSize() {
   if (width >= 481) {
     canvas.setAttribute("width", "500px");
     canvas.setAttribute("height", "500px");
-    //document.body.style = "margin-right: 20%";
     return;
   }
 }
