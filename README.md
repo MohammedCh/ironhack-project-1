@@ -1,6 +1,6 @@
 # ANGRY MOLES! (Ironhack-project-1)
 
-<img align="right" width="100%" src="images/mole_logo.png">
+<img align="left" width="25%" src="images/mole_logo.png">
 The classic arcade [Whac-A-Mole](https://en.wikipedia.org/wiki/Whac-A-Mole) game, in a digital format!
 Try the game on http://mohammedch.github.io/ironhack-project-1/
 
@@ -68,20 +68,23 @@ The code is written in a way to minimize manual work if the game needs to be edi
 
 For example to change the difficulty/speed of the game, lower the gameSpeed variable to make the game faster. To change the starting field, change the numberOfMoles variable to the number of moles you want the game to start with.
 The following function has the variables mentioned in the example above:
-```function resetVariables() {
-  gameSpeed = 2000;
-  gameRunning = true;
-  gamePaused = false;
-  livesAtGameStart = 3;
-  livesUpdate(livesAtGameStart);
-  numberOfMoles = 8;
-  moleLocationArr = moleLocations(numberOfMoles);
-  molesArr = moleCreator(moleLocationArr);
-  popUpsWithNoBomb = 0;
-  level = 0;
-  levelUp();
-  molePointsUpdate(0);
-}```
+
+```
+`function resetVariables() {
+  `gameSpeed = 2000;
+  `gameRunning = true;
+  `gamePaused = false;
+  `livesAtGameStart = 3;
+  `livesUpdate(livesAtGameStart);
+  `numberOfMoles = 8;
+  `moleLocationArr = moleLocations(numberOfMoles);
+  `molesArr = moleCreator(moleLocationArr);
+  `popUpsWithNoBomb = 0;
+  `level = 0;
+  `levelUp();
+  `molePointsUpdate(0);
+`}
+```
 
 ## Supported Browsers
 
@@ -91,4 +94,4 @@ IE is not supported.
 
 ## Special thanks
 
-Thanks to [Raymond](https://github.com/jofariaironhack) and [Joana](https://github.com/jofariaironhack) for guiding us through the first 3 weeks of bootcamp and this project
+Thanks to [Raymond](https://github.com/) and [Joana](https://github.com/jofariaironhack) for guiding us through the first 3 weeks of bootcamp and this project
