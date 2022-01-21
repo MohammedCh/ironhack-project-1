@@ -39,7 +39,7 @@ When the game starts, moles and bombs start popping up randomly. It is played by
 - Highscores on front page - saved to localStorage so available after refresh too
 - Lives show as hearts
 - Some responsiveness, although not perfect. Still doesn't work well with mobile screens
-
+- Added player's name to highscore (not fully functional due to lack of time)
 
 
 ## Future features

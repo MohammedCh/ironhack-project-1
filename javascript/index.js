@@ -14,7 +14,9 @@ window.onload = () => {
 
     modalCloseBtns = document.getElementsByClassName("modal-btn");
     for (const btn of modalCloseBtns) {
-      btn.addEventListener("click", () => resumeGame());
+      btn.addEventListener("click", () => {
+        resumeGame();
+      });
     }
   };
   document.addEventListener("keydown", function (e) {
@@ -381,7 +383,7 @@ function endGame(wonGameBoolean) {
     playSound("./sounds/win.wav");
     playSound("./sounds/yes.wav");
   } else {
-    triggerModal("Game ended", `Your score was ${molePoints}`);
+    triggerModal("Game ended", `Your score was ${molePoints}!`);
     playSound("./sounds/endGame.wav");
   }
   checkIfNewHighscore();
@@ -474,7 +476,8 @@ function resumeGame() {
 function triggerModal(title, content) {
   pauseGame();
   document.getElementById("staticBackdropLabel").innerHTML = title;
-  document.getElementById("modalBody").innerHTML = content;
+  const modalBody = document.getElementById("modalBody");
+  modalBody.innerHTML = content;
   const myModal = new bootstrap.Modal(
     document.getElementById("staticBackdrop")
   );
@@ -486,7 +489,8 @@ function checkIfNewHighscore() {
   const orderedList = document.getElementById("highscores");
   const list = orderedList.children;
   const listParent = orderedList.parentElement;
-  localStorageStr = JSON.parse(localStorage.getItem("highscores")); //retrieve from local storage
+  let playerName;
+  const localStorageStr = JSON.parse(localStorage.getItem("highscores")); //retrieve from local storage
   let arr = [];
 
   //if null then create arr with 0 values, else take values from localStorage
@@ -499,6 +503,7 @@ function checkIfNewHighscore() {
   //if last element of (sorted) array is smaller than molePoints then update
   if (molePoints > arr[arr.length - 1]) {
     arr[arr.length - 1] = molePoints;
+    playerName = document.getElementById("playerName").value;
   }
 
   //sort array in descending format
@@ -513,7 +518,9 @@ function checkIfNewHighscore() {
 
   //update highscore on html
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] != 0) list[i].innerHTML = arr[i] + " moles";
+    if (arr[i] != 0 && playerName)
+      list[i].innerHTML = `${playerName}: ${arr[i]} moles`;
+    else if (arr[i] != 0 && !playerName) list[i].innerHTML = `${arr[i]} moles`;
   }
   if (arr[0] != 0) listParent.style = "display: block";
 }
