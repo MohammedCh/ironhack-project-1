@@ -104,4 +104,4 @@ IE is not supported.
 
 ## Special thanks
 
-Thanks to [Raymond](https://github.com/) and [Joana](https://github.com/jofariaironhack) for their guidance throughout the first 3 weeks of the bootcamp and this project.
+Thanks to [Raymond](https://github.com/RaymondMaroun) and [Joana](https://github.com/jofariaironhack) for their guidance throughout the first 3 weeks of the bootcamp and this project.
