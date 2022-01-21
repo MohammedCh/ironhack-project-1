@@ -298,7 +298,7 @@ function getCursorPosition(canvas, event) {
   return { x: x, y: y };
 }
 
-//checks if there is a mole popping up at the location the mouse clicks
+//checks if there is a bomb or mole are popping up at the location the mouse clicks, and does consequent action
 function checkIfMoleIsHit(cursorClickPosition, event) {
   if (!gamePaused) {
     molesArr.forEach((element) => {
@@ -309,7 +309,6 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
         cursorClickPosition.y <= element.y + 62 &&
         element.state === "bomb"
       ) {
-        console.log("kaboom");
         playSound("./sounds/explosion.mp3");
         hideMole(molesArr.indexOf(element));
         livesUpdate(lives - 1);
@@ -320,7 +319,6 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
         cursorClickPosition.y <= element.y + 62 &&
         element.state === "surface"
       ) {
-        console.log("hit");
         requestTimeout(() => molePointsUpdate(molePoints + 1), 10);
         hideMole(molesArr.indexOf(element));
         showPow(event);
@@ -329,6 +327,7 @@ function checkIfMoleIsHit(cursorClickPosition, event) {
   }
 }
 
+//function triggered on click to check if player click on the question mark "button"
 function checkIfHelpAsked(cursorClickPosition) {
   if (
     cursorClickPosition.x >= canvas.width - 52 &&
@@ -347,6 +346,7 @@ function checkIfHelpAsked(cursorClickPosition) {
   }
 }
 
+//function triggered on click to check if player click on the pause game "button"
 function checkIfGamePaused(cursorClickPosition) {
   if (
     cursorClickPosition.x >= canvas.width - 110 &&
@@ -432,6 +432,7 @@ function molePointsUpdate(number) {
   );
 }
 
+//function called when to play a sound 3
 function playSound(url) {
   const mySound = new sound(url);
   mySound.play();
@@ -517,6 +518,7 @@ function checkIfNewHighscore() {
   if (arr[0] != 0) listParent.style = "display: block";
 }
 
+//responsive canvas
 function setCanvasSize() {
   const width = window.innerWidth;
   if (width >= 769) {
