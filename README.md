@@ -1,6 +1,6 @@
 # ANGRY MOLES! (Ironhack-project-1)
 
-<img align="left" width="25%" src="images/mole_logo.png">
+<img width="25%" src="images/mole_logo.png">
 The classic arcade [Whac-A-Mole](https://en.wikipedia.org/wiki/Whac-A-Mole) game, in a digital format!
 Try the game on http://mohammedch.github.io/ironhack-project-1/
 
