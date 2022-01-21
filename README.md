@@ -5,9 +5,11 @@ The classic arcade [Whac-A-Mole](https://en.wikipedia.org/wiki/Whac-A-Mole) game
 Try the game on http://mohammedch.github.io/ironhack-project-1/
 
 
+
 ## Motivation
 
 This project was done as part of the Ironhack full time web development bootcamp. It is the first out of three main projects required to finish the bootcamp. The reason Whac-A-Mole was chosen is it's simplicity. Given the time constraint of a work week, having a quick MVP is key and something that is simple makes that easier. The second reason is the scalability, meaning that it's a game where features can be easily added based on available time.
+
 
 
 ## How to play
@@ -18,6 +20,7 @@ When the game starts, moles and bombs start popping up randomly. It is played by
 - Every **10** moles hit you get to a new level.
 - Finish level 5 to win!
 - Press *escape* button to end game.
+
 
 
 ## Features/implementation details
@@ -38,6 +41,7 @@ When the game starts, moles and bombs start popping up randomly. It is played by
 - Some responsiveness, although not perfect. Still doesn't work well with mobile screens
 
 
+
 ## Future features
 
 - Testing and potential bugfixing
@@ -46,9 +50,11 @@ When the game starts, moles and bombs start popping up randomly. It is played by
 - Mole animation: gradually change mole between appearing and dissappearing. Also different mole animation when hit
 
 
+
 ## Build status
 
 The game hasn't undergone a lot of testing so it might contain some bugs. A known bug happens upon restarting the game multiple times quickly and consecutively. It is recommended to reload the browser every new game (don't worry, highscores will not dissappear :)).
+
 
 
 ## Framework used
@@ -56,10 +62,11 @@ The game hasn't undergone a lot of testing so it might contain some bugs. A know
 The is a simple browser based, client side game, built using HTML, CSS and Javascript.
 
 
+
 ## How to simply adjust game for your taste
 
 Just fork the repo, and edit the /javascript/index.js file.
-The code is written in a way to minimize manual work if the game needs to be edited. With very small edits you can change the entire code. Some examples include:
+The code is written in a way to minimize manual work if the game needs to be edited. With very small edits you can change the entire code. Things that can easily change, but not limited to:
 - Difficulty/Speed
 - Speed change per level
 - Starting field
@@ -86,12 +93,15 @@ The following function has the variables mentioned in the example above:
 `}
 ```
 
+
+
 ## Supported Browsers
 
 The game can be played on most browsers such as Chrome, Safari, Firefox, Opera, Edge etc.
 IE is not supported.
 
 
+
 ## Special thanks
 
-Thanks to [Raymond](https://github.com/) and [Joana](https://github.com/jofariaironhack) for guiding us through the first 3 weeks of bootcamp and this project
+Thanks to [Raymond](https://github.com/) and [Joana](https://github.com/jofariaironhack) for their guidance throughout the first 3 weeks of the bootcamp and this project.
