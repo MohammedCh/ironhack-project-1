@@ -6,6 +6,7 @@ Try the game on http://mohammedch.github.io/ironhack-project-1/
 
 
 
+
 ## Motivation
 
 This project was done as part of the Ironhack full time web development bootcamp. It is the first out of three main projects required to finish the bootcamp. The reason Whac-A-Mole was chosen is it's simplicity. Given the time constraint of a work week, having a quick MVP is key and something that is simple makes that easier. The second reason is the scalability, meaning that it's a game where features can be easily added based on available time.
